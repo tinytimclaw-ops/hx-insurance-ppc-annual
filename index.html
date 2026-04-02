@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex, nofollow">
+  <meta name="description" content="Travel insurance from £12. Single trip or annual multi-trip cover with medical protection up to £10m, trip cancellation, and 24/7 support.">
+
+  <title>Travel Insurance from £12 | Single Trip & Annual Cover | Holiday Extras</title>
+
+  <!-- Open Graph -->
+  <meta property="og:title" content="Travel Insurance from £12 - Single Trip & Annual">
+  <meta property="og:description" content="Get covered in minutes. Medical protection up to £10m, trip cancellation, 24/7 support.">
+  <meta property="og:type" content="website">
+
+  <!-- Preconnect -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="preconnect" href="https://d17s4kc6349e5h.cloudfront.net">
+  <link rel="preconnect" href="https://hapi.holidayextras.co.uk">
+
+  <!-- Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="styles.css">
+  <script src="script.js" defer></script>
+
+  <!-- Structured Data -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "InsuranceAgency",
+    "name": "Holiday Extras",
+    "description": "Travel insurance for single trips and annual multi-trip cover",
+    "url": "https://www.holidayextras.com"
+  }
+  </script>
+</head>
+<body>
+  <!-- Header -->
+  <header class="header">
+    <div class="container">
+      <img src="https://d17s4kc6349e5h.cloudfront.net/holidayextras/assets/images/logos/HolidayExtras-logo-horizontal-transparent.svg"
+           alt="Holiday Extras"
+           class="logo"
+           height="60"
+           width="240">
+      <div class="header-trust">
+        <div class="trust-item">
+          ⭐ Excellent 4.6/5
+        </div>
+        <div class="trust-item">
+          ✓ FCA Regulated
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Hero Section -->
+  <section class="hero">
+    <div class="container">
+      <div class="hero-content">
+        <div class="hero-left">
+          <h1 class="hero-title">Travel Insurance from £12</h1>
+          <p class="hero-subtitle">Single trip or annual cover. Get protected in minutes.</p>
+
+          <ul class="hero-benefits">
+            <li>✓ Medical cover up to £10m</li>
+            <li>✓ Trip cancellation included</li>
+            <li>✓ 24/7 emergency support</li>
+            <li>✓ Covered in minutes</li>
+          </ul>
+
+          <div class="trust-badges">
+            <div class="badge">40+ years experience</div>
+            <div class="badge">1m+ customers</div>
+            <div class="badge">Best price guarantee</div>
+          </div>
+        </div>
+
+        <div class="hero-right">
+          <div class="quote-card">
+            <div class="quote-header">
+              <div class="cover-toggle">
+                <button type="button" class="toggle-btn active" data-type="single" onclick="switchCoverType('single')">
+                  Single Trip
+                  <span class="toggle-price">from £12</span>
+                </button>
+                <button type="button" class="toggle-btn" data-type="annual" onclick="switchCoverType('annual')">
+                  Annual Multi-Trip
+                  <span class="toggle-price">from £45</span>
+                </button>
+              </div>
+              <div class="value-message" id="valueMessage">
+                💡 <strong>Taking 2+ trips?</strong> Annual could save you money
+              </div>
+            </div>
+
+            <form class="quote-form" id="quoteForm">
+              <!-- Cover type (hidden, controlled by toggle) -->
+              <input type="hidden" id="coverType" name="coverType" value="single">
+
+              <!-- Destination -->
+              <div class="form-group">
+                <label class="form-label" for="region">Where are you going?</label>
+                <select class="form-control" id="region" name="region" required>
+                  <option value="">Select destination</option>
+                  <option value="UK">UK</option>
+                  <option value="Europe">Europe</option>
+                  <option value="Worldwide">Worldwide</option>
+                  <option value="ANZ">Australia & New Zealand</option>
+                </select>
+              </div>
+
+              <!-- Europe sub-question -->
+              <div class="form-group" id="europeQuestion" style="display: none;">
+                <label class="form-label">
+                  <input type="checkbox" id="europeHighRisk" name="europeHighRisk">
+                  Visiting Spain, Cyprus, Malta, Turkey, or Greece?
+                </label>
+              </div>
+
+              <!-- Worldwide sub-question -->
+              <div class="form-group" id="worldwideQuestion" style="display: none;">
+                <label class="form-label">
+                  <input type="checkbox" id="worldwideUSA" name="worldwideUSA">
+                  Visiting USA, Canada, Mexico, or the Caribbean?
+                </label>
+              </div>
+
+              <!-- Dates (single trip only) -->
+              <div id="singleTripDates">
+                <div class="form-row">
+                  <div class="form-group">
+                    <label class="form-label" for="startDate">Departure date</label>
+                    <input type="date" class="form-control" id="startDate" name="startDate" required>
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label" for="endDate">Return date</label>
+                    <input type="date" class="form-control" id="endDate" name="endDate" required>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Start date (annual only) -->
+              <div id="annualStartDate" style="display: none;">
+                <div class="form-group">
+                  <label class="form-label" for="annualStart">Policy start date</label>
+                  <input type="date" class="form-control" id="annualStart" name="annualStart">
+                </div>
+                <p class="form-hint">Your annual policy covers unlimited trips up to 31 days each</p>
+              </div>
+
+              <!-- Travellers -->
+              <div class="form-group">
+                <label class="form-label" for="travellerCount">Number of travellers</label>
+                <select class="form-control" id="travellerCount" name="travellerCount" required>
+                  <option value="1">1 traveller</option>
+                  <option value="2">2 travellers</option>
+                  <option value="3">3 travellers</option>
+                  <option value="4">4 travellers</option>
+                  <option value="5">5 travellers</option>
+                  <option value="6">6 travellers</option>
+                  <option value="7">7 travellers</option>
+                  <option value="8">8 travellers</option>
+                  <option value="9">9 travellers</option>
+                </select>
+              </div>
+
+              <!-- Traveller details -->
+              <div id="travellerDetails"></div>
+
+              <!-- Holiday cost -->
+              <div class="form-group">
+                <label class="form-label" for="holidayValue">Holiday cost per person</label>
+                <select class="form-control" id="holidayValue" name="holidayValue" required>
+                  <option value="">Select cost</option>
+                  <option value="500">Up to £500</option>
+                  <option value="1000">£500 - £1,000</option>
+                  <option value="2500">£1,000 - £2,500</option>
+                  <option value="5000">£2,500 - £5,000</option>
+                  <option value="6000">£5,000 - £6,000</option>
+                  <option value="7000">£6,000 - £7,000</option>
+                  <option value="8000">£7,000 - £8,000</option>
+                  <option value="9000">£8,000 - £9,000</option>
+                  <option value="10000">£9,000 - £10,000</option>
+                  <option value="20000">£10,000+</option>
+                </select>
+              </div>
+
+              <!-- Medical screening -->
+              <div class="form-group">
+                <label class="form-label">Medical conditions</label>
+                <p class="form-hint">Has anyone travelling ever had, or are they currently experiencing: active cancer treatment, surgery, awaiting test results, terminal illness, addiction treatment in the last 5 years, heart/circulatory/stroke/lung/bowel conditions, any cancer, or any physical/psychological condition treated in the last 2 years?</p>
+                <div class="radio-group">
+                  <label class="radio-label">
+                    <input type="radio" name="medicalConditions" value="no" required>
+                    No
+                  </label>
+                  <label class="radio-label">
+                    <input type="radio" name="medicalConditions" value="yes" required>
+                    Yes
+                  </label>
+                </div>
+              </div>
+
+              <!-- Undiagnosed symptoms -->
+              <div class="form-group" id="symptomQuestion" style="display: none;">
+                <label class="form-label">Undiagnosed symptoms</label>
+                <p class="form-hint">Is anyone experiencing symptoms not yet diagnosed by a doctor?</p>
+                <div class="radio-group">
+                  <label class="radio-label">
+                    <input type="radio" name="undiagnosedSymptoms" value="no" required>
+                    No
+                  </label>
+                  <label class="radio-label">
+                    <input type="radio" name="undiagnosedSymptoms" value="yes" required>
+                    Yes
+                  </label>
+                </div>
+                <div id="symptomWarning" style="display: none;">
+                  <p class="warning-text">⚠️ Undiagnosed symptoms won't be covered. We recommend seeing a doctor before travelling.</p>
+                </div>
+              </div>
+
+              <button type="submit" class="btn-primary">Get your quote →</button>
+
+              <p class="form-note">Instant quotes • No obligation • Secure & encrypted</p>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Value Comparison (if they selected single trip) -->
+  <section class="comparison-section" id="comparisonSection">
+    <div class="container">
+      <h2 class="section-title">Travelling more than once this year?</h2>
+      <p class="section-subtitle">Annual multi-trip could save you money and hassle</p>
+
+      <div class="comparison-grid">
+        <div class="comparison-card">
+          <div class="comparison-header">
+            <h3>Single Trip</h3>
+            <div class="comparison-price">from £12 <span>per trip</span></div>
+          </div>
+          <ul class="comparison-list">
+            <li>✓ Perfect for one-off holidays</li>
+            <li>✓ Cover for your specific dates</li>
+            <li>✓ No long-term commitment</li>
+            <li>✓ Quick and flexible</li>
+          </ul>
+          <div class="comparison-math">
+            <strong>2 trips:</strong> £24+<br>
+            <strong>3 trips:</strong> £36+
+          </div>
+        </div>
+
+        <div class="comparison-card featured">
+          <div class="comparison-badge">Smart choice for 2+ trips</div>
+          <div class="comparison-header">
+            <h3>Annual Multi-Trip</h3>
+            <div class="comparison-price">from £45 <span>per year</span></div>
+          </div>
+          <ul class="comparison-list">
+            <li>✓ Unlimited trips (up to 31 days each)</li>
+            <li>✓ Set and forget - covered all year</li>
+            <li>✓ Better value for repeat travellers</li>
+            <li>✓ Spontaneous trips? No problem</li>
+          </ul>
+          <div class="comparison-math">
+            <strong>Covers unlimited trips</strong><br>
+            Break-even at just 2-3 trips
+          </div>
+          <button class="btn-secondary" onclick="switchCoverType('annual'); scrollToForm();">
+            Switch to annual →
+          </button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Cover Highlights -->
+  <section class="cover-highlights">
+    <div class="container">
+      <h2 class="section-title">What you're covered for</h2>
+
+      <div class="highlight-grid">
+        <div class="highlight-card">
+          <div class="highlight-icon">🏥</div>
+          <h3 class="highlight-title">Medical expenses</h3>
+          <div class="highlight-amount">up to £10m</div>
+          <p class="highlight-description">Emergency medical treatment and repatriation</p>
+        </div>
+
+        <div class="highlight-card">
+          <div class="highlight-icon">✈️</div>
+          <h3 class="highlight-title">Cancellation</h3>
+          <div class="highlight-amount">up to £5,000</div>
+          <p class="highlight-description">Get your money back if plans change</p>
+        </div>
+
+        <div class="highlight-card">
+          <div class="highlight-icon">🧳</div>
+          <h3 class="highlight-title">Baggage</h3>
+          <div class="highlight-amount">up to £2,500</div>
+          <p class="highlight-description">Lost or stolen belongings covered</p>
+        </div>
+
+        <div class="highlight-card">
+          <div class="highlight-icon">⏰</div>
+          <h3 class="highlight-title">24/7 support</h3>
+          <div class="highlight-amount">Always available</div>
+          <p class="highlight-description">Emergency helpline whenever you need it</p>
+        </div>
+      </div>
+
+      <div class="cta-block">
+        <button class="btn-secondary" onclick="scrollToForm()">Get your quote now →</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Trust Section -->
+  <section class="trust-section">
+    <div class="container">
+      <h2 class="section-title">Why choose Holiday Extras?</h2>
+
+      <div class="trust-grid">
+        <div class="trust-card">
+          <div class="trust-icon">🏆</div>
+          <div>
+            <h3 class="trust-title">40+ years experience</h3>
+            <p class="trust-description">Protecting travellers since 1983</p>
+          </div>
+        </div>
+
+        <div class="trust-card">
+          <div class="trust-icon">⭐</div>
+          <div>
+            <h3 class="trust-title">Excellent 4.6/5 on Trustpilot</h3>
+            <p class="trust-description">Rated by over 50,000 customers</p>
+          </div>
+        </div>
+
+        <div class="trust-card">
+          <div class="trust-icon">🔒</div>
+          <div>
+            <h3 class="trust-title">FCA regulated</h3>
+            <p class="trust-description">Your protection is our priority</p>
+          </div>
+        </div>
+
+        <div class="trust-card">
+          <div class="trust-icon">💰</div>
+          <div>
+            <h3 class="trust-title">Best price guarantee</h3>
+            <p class="trust-description">Find it cheaper? We'll match it</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Final CTA -->
+  <section class="final-cta">
+    <div class="container">
+      <h2 class="final-cta-title">Ready to get covered?</h2>
+      <p class="final-cta-subtitle">Get your quote in minutes. No obligation.</p>
+      <button class="btn-large" onclick="scrollToForm()">Get your quote now →</button>
+      <p class="final-cta-note">✓ Instant quotes • ✓ Secure checkout • ✓ Cover starts today</p>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container">
+      <p>&copy; 2026 Holiday Extras. All rights reserved. | <a href="https://www.holidayextras.com/terms" class="footer-link">Terms</a> | <a href="https://www.holidayextras.com/privacy" class="footer-link">Privacy</a></p>
+      <p class="small">Holiday Extras Ltd is an appointed representative of ITC Compliance Ltd which is authorised and regulated by the Financial Conduct Authority (their registration number is 313486).</p>
+    </div>
+  </footer>
+
+  <!-- Loading Overlay -->
+  <div class="loading-overlay" id="loadingOverlay" style="display: none;">
+    <div class="spinner"></div>
+    <p>Getting your quote...</p>
+  </div>
+</body>
+</html>
