@@ -76,6 +76,12 @@ function setupEventListeners() {
     travellerCountSelect.addEventListener('change', handleTravellerCountChange);
   }
 
+  // Holiday value - fire certificate in background when selected
+  const holidayValueSelect = document.getElementById('holidayValue');
+  if (holidayValueSelect) {
+    holidayValueSelect.addEventListener('change', handleHolidayValueChange);
+  }
+
   // Medical conditions
   const medicalConditionsInputs = document.querySelectorAll('input[name="medicalConditions"]');
   medicalConditionsInputs.forEach(input => {
@@ -304,6 +310,57 @@ function collectTravellerData() {
   formData.travellers = travellers;
 }
 
+// Holiday value - fire certificate in background
+function handleHolidayValueChange(e) {
+  formData.holidayValue = parseInt(e.target.value);
+
+  // Fire certificate call immediately in background with non-medical subtype
+  // Per insurance_search.md: "After collecting cost: immediately fire the HAPI certificate call"
+  if (formData.startDate && formData.endDate && formData.destId && formData.travellers.length > 0) {
+    formData.policySubtype = 'non-medical';
+    callHapiCertificateBackground();
+  }
+}
+
+async function callHapiCertificateBackground() {
+  try {
+    collectTravellerData(); // Ensure traveller data is current
+
+    const sid = generateRandomHex(32);
+    const certResponse = await fetch(
+      `https://hapi.holidayextras.co.uk/insurance/certificates/new?token=4ad4966f-0b6a-49a9-8601-2a456aeb5c03&sid=${sid}`,
+      {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          from: formData.startDate,
+          to: formData.endDate,
+          destination_id: formData.destId,
+          agent: agent,
+          policySubtype: formData.policySubtype,
+          holidayValue: formData.holidayValue,
+          family_group_id: 1,
+          country: 'GBR',
+          cruise: false,
+          email: null,
+          unrecSend: 1,
+          renewal: 0,
+          people: formData.travellers
+        })
+      }
+    );
+
+    if (certResponse.ok) {
+      const certData = await certResponse.json();
+      formData.certificateID = certData.certificateID;
+      formData.hash = certData.insHash;
+      console.log('Background certificate created:', certData.certificateID);
+    }
+  } catch (error) {
+    console.error('Background certificate API error:', error);
+  }
+}
+
 // Medical screening
 function handleMedicalConditionsChange(e) {
   const symptomQuestion = document.getElementById('symptomQuestion');
@@ -313,11 +370,18 @@ function handleMedicalConditionsChange(e) {
       symptomQuestion.style.display = 'block';
     }
     formData.policySubtype = 'non-medical';
+    // Keep the non-medical cert that was fired after holiday cost
   } else {
     if (symptomQuestion) {
       symptomQuestion.style.display = 'none';
     }
     formData.policySubtype = 'medical';
+
+    // Fire new certificate with medical subtype
+    // Per insurance_search.md: "Yes → fire a new HAPI cert with policySubtype: 'medical'"
+    if (formData.holidayValue && formData.startDate && formData.endDate && formData.destId && formData.travellers.length > 0) {
+      callHapiCertificateBackground();
+    }
   }
 }
 
@@ -369,27 +433,14 @@ async function handleFormSubmit(e) {
   // Get medical answer
   const medicalConditions = document.querySelector('input[name="medicalConditions"]:checked')?.value;
 
-  try {
-    // Call HAPI certificate API
-    const certResponse = await callHapiCertificate();
+  // Certificate was already fired in background after holiday cost selection
+  // Just use the existing certificateID and hash from formData
 
-    if (certResponse) {
-      formData.certificateID = certResponse.certificateID;
-      formData.hash = certResponse.insHash;
-    }
+  // Build redirect URL
+  const redirectUrl = buildRedirectUrl(medicalConditions === 'yes');
 
-    // Build redirect URL
-    const redirectUrl = buildRedirectUrl(medicalConditions === 'yes');
-
-    // Redirect
-    window.location.href = redirectUrl;
-
-  } catch (error) {
-    console.error('Error getting quote:', error);
-    // Continue without cert
-    const redirectUrl = buildRedirectUrl(medicalConditions === 'yes');
-    window.location.href = redirectUrl;
-  }
+  // Redirect
+  window.location.href = redirectUrl;
 }
 
 function validateForm() {
