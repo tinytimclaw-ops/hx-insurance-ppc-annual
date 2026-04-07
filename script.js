@@ -29,6 +29,7 @@ function initializeForm() {
   if (startDateInput) {
     startDateInput.setAttribute('min', today);
     startDateInput.value = datePlus(1); // Default to tomorrow
+    formData.startDate = startDateInput.value; // Initialize formData
   }
 
   // Set default end date (7 days from start)
@@ -36,6 +37,7 @@ function initializeForm() {
   if (endDateInput) {
     endDateInput.value = datePlus(8);
     endDateInput.setAttribute('min', datePlus(1));
+    formData.endDate = endDateInput.value; // Initialize formData
   }
 
   // Initialize annual start date
@@ -314,51 +316,77 @@ function collectTravellerData() {
 function handleHolidayValueChange(e) {
   formData.holidayValue = parseInt(e.target.value);
 
+  console.log('=== Holiday value changed ===');
+  console.log('Holiday value:', formData.holidayValue);
+  console.log('formData.startDate:', formData.startDate);
+  console.log('formData.endDate:', formData.endDate);
+  console.log('formData.destId:', formData.destId);
+
+  const travellerCount = parseInt(document.getElementById('travellerCount').value);
+  console.log('Traveller count:', travellerCount);
+
   // Fire certificate call immediately in background with non-medical subtype
   // Per insurance_search.md: "After collecting cost: immediately fire the HAPI certificate call"
-  const travellerCount = parseInt(document.getElementById('travellerCount').value);
   if (formData.startDate && formData.endDate && formData.destId && travellerCount > 0) {
+    console.log('✓ All conditions met - firing certificate');
     formData.policySubtype = 'non-medical';
     callHapiCertificateBackground();
+  } else {
+    console.log('✗ Conditions NOT met:');
+    if (!formData.startDate) console.log('  - Missing startDate');
+    if (!formData.endDate) console.log('  - Missing endDate');
+    if (!formData.destId) console.log('  - Missing destId');
+    if (!(travellerCount > 0)) console.log('  - Invalid traveller count');
   }
 }
 
 async function callHapiCertificateBackground() {
   try {
+    console.log('=== Calling HAPI certificate ===');
     collectTravellerData(); // Ensure traveller data is current
 
+    const requestBody = {
+      from: formData.startDate,
+      to: formData.endDate,
+      destination_id: formData.destId,
+      agent: agent,
+      policySubtype: formData.policySubtype,
+      holidayValue: formData.holidayValue,
+      family_group_id: 1,
+      country: 'GBR',
+      cruise: false,
+      email: null,
+      unrecSend: 1,
+      renewal: 0,
+      people: formData.travellers
+    };
+
+    console.log('Request body:', JSON.stringify(requestBody, null, 2));
+
     const sid = generateRandomHex(32);
-    const certResponse = await fetch(
-      `https://hapi.holidayextras.co.uk/insurance/certificates/new?token=4ad4966f-0b6a-49a9-8601-2a456aeb5c03&sid=${sid}`,
-      {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          from: formData.startDate,
-          to: formData.endDate,
-          destination_id: formData.destId,
-          agent: agent,
-          policySubtype: formData.policySubtype,
-          holidayValue: formData.holidayValue,
-          family_group_id: 1,
-          country: 'GBR',
-          cruise: false,
-          email: null,
-          unrecSend: 1,
-          renewal: 0,
-          people: formData.travellers
-        })
-      }
-    );
+    const url = `https://hapi.holidayextras.co.uk/insurance/certificates/new?token=4ad4966f-0b6a-49a9-8601-2a456aeb5c03&sid=${sid}`;
+    console.log('Calling URL:', url);
+
+    const certResponse = await fetch(url, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(requestBody)
+    });
+
+    console.log('Response status:', certResponse.status);
 
     if (certResponse.ok) {
       const certData = await certResponse.json();
       formData.certificateID = certData.certificateID;
       formData.hash = certData.insHash;
-      console.log('Background certificate created:', certData.certificateID);
+      console.log('✓ Background certificate created:', certData.certificateID);
+      console.log('Hash:', certData.insHash);
+    } else {
+      const errorText = await certResponse.text();
+      console.error('✗ Certificate API error:', certResponse.status, errorText);
     }
   } catch (error) {
-    console.error('Background certificate API error:', error);
+    console.error('✗ Background certificate API error:', error);
   }
 }
 
