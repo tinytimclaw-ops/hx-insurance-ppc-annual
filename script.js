@@ -316,7 +316,8 @@ function handleHolidayValueChange(e) {
 
   // Fire certificate call immediately in background with non-medical subtype
   // Per insurance_search.md: "After collecting cost: immediately fire the HAPI certificate call"
-  if (formData.startDate && formData.endDate && formData.destId && formData.travellers.length > 0) {
+  const travellerCount = parseInt(document.getElementById('travellerCount').value);
+  if (formData.startDate && formData.endDate && formData.destId && travellerCount > 0) {
     formData.policySubtype = 'non-medical';
     callHapiCertificateBackground();
   }
@@ -384,7 +385,8 @@ function handleMedicalConditionsChange(e) {
 
     // Fire new certificate with medical subtype
     // Per insurance_search.md: "Yes → fire a new HAPI cert with policySubtype: 'medical'"
-    if (formData.holidayValue && formData.startDate && formData.endDate && formData.destId && formData.travellers.length > 0) {
+    const travellerCount = parseInt(document.getElementById('travellerCount').value);
+    if (formData.holidayValue && formData.startDate && formData.endDate && formData.destId && travellerCount > 0) {
       callHapiCertificateBackground();
     }
   }
