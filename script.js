@@ -364,17 +364,22 @@ async function callHapiCertificateBackground() {
 // Medical screening
 function handleMedicalConditionsChange(e) {
   const symptomQuestion = document.getElementById('symptomQuestion');
+  const symptomInputs = document.querySelectorAll('input[name="undiagnosedSymptoms"]');
 
   if (e.target.value === 'no') {
     if (symptomQuestion) {
       symptomQuestion.style.display = 'block';
     }
+    // Make symptom question required
+    symptomInputs.forEach(input => input.required = true);
     formData.policySubtype = 'non-medical';
     // Keep the non-medical cert that was fired after holiday cost
   } else {
     if (symptomQuestion) {
       symptomQuestion.style.display = 'none';
     }
+    // Remove required from hidden symptom question to prevent validation error
+    symptomInputs.forEach(input => input.required = false);
     formData.policySubtype = 'medical';
 
     // Fire new certificate with medical subtype
